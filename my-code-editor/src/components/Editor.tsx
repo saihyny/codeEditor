@@ -1,10 +1,7 @@
 import React, { useEffect } from 'react';
-import prettier from 'prettier/standalone';
-import parserBabel from 'prettier/parser-babel';
-import Prism from 'prismjs'; // Import Prism.js
-import 'prismjs/themes/prism-tomorrow.css'; // Optional: import a theme for Prism.js
-import 'prismjs/components/prism-javascript.min.js'; // Import the specific language you need
-// Import other languages as needed
+import Prism from 'prismjs'; 
+import 'prismjs/themes/prism-tomorrow.css'; 
+import 'prismjs/components/prism-javascript.min.js'; 
 
 interface EditorProps {
   code: string;
@@ -12,7 +9,6 @@ interface EditorProps {
   selectedLanguage: string;
   activeFile: string;
   theme: string;
-  formatCode: () => void; // Add formatCode prop
 }
 
 const Editor: React.FC<EditorProps> = ({
@@ -21,13 +17,11 @@ const Editor: React.FC<EditorProps> = ({
   selectedLanguage,
   activeFile,
   theme,
-  formatCode,
 }) => {
   
-  // Highlight code on render
   useEffect(() => {
-    Prism.highlightAll(); // Highlight code after rendering
-  }, [code]); // Re-run effect when code changes
+    Prism.highlightAll(); 
+  }, [code]); 
 
   return (
     <div className={`editor-container flex-grow p-4 ${theme === 'light' ? 'bg-white text-black' : 'bg-gray-800 text-white'}`}>
@@ -54,4 +48,3 @@ const Editor: React.FC<EditorProps> = ({
 };
 
 export default Editor;
-

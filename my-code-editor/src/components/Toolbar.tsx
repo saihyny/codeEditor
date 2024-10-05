@@ -3,7 +3,7 @@ import React from 'react';
 interface ToolbarProps {
   saveCode: () => void;
   resetCode: () => void;
-  formatCode: () => void; // Add formatCode prop
+  formatCode: () => void;
   toggleTheme: () => void;
   isDarkTheme: boolean;
   selectedLanguage: string;
@@ -13,7 +13,7 @@ interface ToolbarProps {
 const Toolbar: React.FC<ToolbarProps> = ({
   saveCode,
   resetCode,
-  formatCode, // Include formatCode prop
+  formatCode,
   toggleTheme,
   isDarkTheme,
   selectedLanguage,

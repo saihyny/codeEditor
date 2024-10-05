@@ -39,11 +39,13 @@ const App: React.FC = () => {
 
   const saveCode = () => {
     localStorage.setItem(activeFile, code);
-    alert('Code saved!');
+    alert('Code saved to local storage!'); // Display notification
   };
 
   const resetCode = () => {
     setCode('');
+    setFiles({ ...files, [activeFile]: '' });
+    localStorage.removeItem(activeFile);
   };
 
   const toggleTheme = () => {
@@ -57,18 +59,34 @@ const App: React.FC = () => {
         plugins: [parserBabel],
       });
       setCode(formattedCode);
+      setFiles({ ...files, [activeFile]: formattedCode });
     } catch (err) {
       console.error('Error formatting code', err);
     }
   };
 
   useEffect(() => {
-    // Load saved code from localStorage on component mount
+    // Load saved code from localStorage when the active file changes
     const savedCode = localStorage.getItem(activeFile);
-    if (savedCode) {
-      setCode(savedCode);
-    }
-  }, [activeFile]);
+    setCode(files[activeFile] || savedCode || '');
+  }, [activeFile, files]);
+
+  // Add "CTRL + S" keydown event listener to save code
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+        event.preventDefault(); // Prevent the default browser save behavior
+        saveCode(); // Call saveCode function to save the current file
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup the event listener when component is unmounted
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [code, activeFile]); // Dependency on code and activeFile to ensure it uses the latest state
 
   return (
     <div className={`flex h-screen ${isDarkTheme ? 'bg-gray-900' : 'bg-white'}`}>
@@ -77,7 +95,6 @@ const App: React.FC = () => {
         activeFile={activeFile}
         setActiveFile={(fileName) => {
           setActiveFile(fileName);
-          setCode(files[fileName]);
         }}
         addFile={addFile}
         deleteFile={deleteFile}
@@ -90,15 +107,17 @@ const App: React.FC = () => {
           resetCode={resetCode}
           toggleTheme={toggleTheme}
           isDarkTheme={isDarkTheme}
-          onFormatCode={formatCode} // Pass formatCode function to Toolbar
+          formatCode={formatCode}
         />
         <Editor
           code={code}
-          setCode={(newCode) => setFiles({ ...files, [activeFile]: newCode })}
+          setCode={(newCode) => {
+            setCode(newCode);
+            setFiles({ ...files, [activeFile]: newCode });
+          }}
           selectedLanguage={selectedLanguage}
           activeFile={activeFile}
-          theme={isDarkTheme ? 'dark' : 'light'} // Pass the theme state
-          formatCode={formatCode} // Pass formatCode function to Editor
+          theme={isDarkTheme ? 'dark' : 'light'}
         />
       </div>
     </div>
